@@ -9,7 +9,7 @@
 #include <sys/file.h>
 #include <fcntl.h> /* Needed for Solaris */
 
-#define NTHREADS 2//change number to 100,1000,10000,100000 (after that shows seg fault) 
+#define NTHREADS 4//change number to 100,1000,10000,100000 (after that shows seg fault) 
 
 
 pthread_mutex_t mymutex=PTHREAD_MUTEX_INITIALIZER;
@@ -20,6 +20,7 @@ struct infoR
 {
     char *buf;//the text that this thread must read
     int counter_thread;//the number of the thread
+    char next_char;
 };
 
 int is_separator(char ch);
@@ -110,14 +111,23 @@ void *word_counter(void *structs_args)
     int counter=0;
     int i;
     
+ 
+    
+  
     for(int i=limit*(strlen(args->buf)/NTHREADS);i<(limit+1)*(strlen(args->buf)/NTHREADS);i++)
     {
+      //check the out of bound exception
+        printf("thread %d\n",limit);
+        printf("character is %c\n",args->buf[i]);
+        printf("args->buf[i] %c->%d\n",args->buf[i],args->buf[i]);
+        printf("args->buf[i+1] %c->%d\n",args->buf[i+1],args->buf[i+1]);
         if(!is_separator(args->buf[i]) && is_separator(args->buf[i+1]))
         {
             counter++;
 
         }
     }
+    
     pthread_mutex_lock(&mymutex);
     sum=sum+counter;
     pthread_mutex_unlock(&mymutex);
