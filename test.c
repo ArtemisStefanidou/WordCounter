@@ -111,23 +111,28 @@ void *word_counter(void *structs_args)
     int counter=0;
     int i;
     
- 
-    
-  
-    for(int i=limit*(strlen(args->buf)/NTHREADS);i<(limit+1)*(strlen(args->buf)/NTHREADS);i++)
+    if(limit==NTHREADS-1 && strlen(args->buf)%NTHREADS!=0)
     {
-      //check the out of bound exception
-        printf("thread %d\n",limit);
-        printf("character is %c\n",args->buf[i]);
-        printf("args->buf[i] %c->%d\n",args->buf[i],args->buf[i]);
-        printf("args->buf[i+1] %c->%d\n",args->buf[i+1],args->buf[i+1]);
-        if(!is_separator(args->buf[i]) && is_separator(args->buf[i+1]))
+        for(int i=limit*(strlen(args->buf)/NTHREADS);i<((limit+1)*(strlen(args->buf)/NTHREADS))+strlen(args->buf)%NTHREADS;i++)
         {
-            counter++;
+            if(!is_separator(args->buf[i]) && is_separator(args->buf[i+1]))
+            {
+                counter++;
 
+            }
+        }
+    }else
+    {
+        for(int i=limit*(strlen(args->buf)/NTHREADS);i<(limit+1)*(strlen(args->buf)/NTHREADS);i++)
+        {
+            if(!is_separator(args->buf[i]) && is_separator(args->buf[i+1]))
+            {
+                counter++;
+
+            }
         }
     }
-    
+
     pthread_mutex_lock(&mymutex);
     sum=sum+counter;
     pthread_mutex_unlock(&mymutex);
