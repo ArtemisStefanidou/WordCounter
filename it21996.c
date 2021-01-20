@@ -64,8 +64,7 @@ int main(int argc, char *argv[])
 
         }
 
-        printf("%s/%s\n",argv[1],filename);
-        printf("%s\n",filename);
+       
 
         long filesize=lseek(fd, 0, SEEK_END);
                 
@@ -87,8 +86,6 @@ int main(int argc, char *argv[])
         {
             continue;
         }
-
-        printf("%d characters were read \n", characters);
         
         char *argv[2];
 
@@ -99,21 +96,20 @@ int main(int argc, char *argv[])
 			perror("fork");
 			exit(1);
 		}
+        char *args[]={"./wordcounter",buffer_of_filename,NULL}; 
 
-        argv[0]=de->d_name;
-        argv[1]=buffer;
-
-        close(fd);
+        
         if (pid == 0)
 		{
-           execvp("wordcounter",argv);
+            printf("OLE\n");
+           execv(args[0],args);
         }else{
             wait(NULL);
         }
     }
 
    
-
+    close(fd);
     closedir(pDir);  
     return 0;
 }

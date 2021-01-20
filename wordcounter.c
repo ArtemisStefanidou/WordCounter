@@ -21,15 +21,18 @@ void *word_counter(void *structs_args)
     int counter=0;
     int i;
     
+    
     if(limit==NTHREADS-1 && strlen(args->buf)%NTHREADS!=0)
     {
-        for(int i=limit*(strlen(args->buf)/NTHREADS);i<((limit+1)*(strlen(args->buf)/NTHREADS))+strlen(args->buf)%NTHREADS;i++)
+
+        for(int i=limit*(strlen(args->buf)/NTHREADS);i<((limit+1)*(strlen(args->buf)/NTHREADS))+(strlen(args->buf)%NTHREADS)-1;i++)
         {
+           
             if(!is_separator(args->buf[i]) && is_separator(args->buf[i+1]))
             {
                 
                 counter++;
-
+                
             }
         }
     }else
@@ -40,7 +43,7 @@ void *word_counter(void *structs_args)
             {
                 
                 counter++;
-
+                
             }
         }
     }
@@ -61,14 +64,29 @@ int main(int argc, char *argv[])
 {
     pthread_t threads[NTHREADS];
     info counter[NTHREADS];
-
+    int fd, characters;
     
+    if ((fd=open(argv[1], O_RDONLY ))==-1)
+    {
+        perror("open");
+        exit(1);
+    }
 
-            
+    printf("%s\n",argv[1]);
+
+    long filesize=lseek(fd, 0, SEEK_END);
+
+    char buffer[filesize];
+                
+    lseek(fd, 0, SEEK_SET);
+    characters=read(fd, buffer, sizeof(buffer));
+
+    printf("%d characters were read from thread main\n", characters); 
+
     for (int i = 0; i < NTHREADS; ++i)
     {
                 
-        counter[i].buf=argv[1];
+        counter[i].buf=buffer;
         counter[i].counter_thread=i;
         pthread_create(&threads[i], NULL, &word_counter, (void *)&(counter[i]));
             
@@ -78,8 +96,7 @@ int main(int argc, char *argv[])
     {
         pthread_join(threads[i],NULL);
     }
-    printf ("The words of the %s is: %d\n",argv[0],sum);
+    printf ("The words of the %s is: %d\n",argv[1],sum);
 
     return 0;
 }       
-
