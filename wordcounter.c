@@ -65,38 +65,37 @@ int main(int argc, char *argv[])
     pthread_t threads[NTHREADS];
     info counter[NTHREADS];
     int fd, characters;
-    
-    if ((fd=open(argv[1], O_RDONLY ))==-1)
-    {
-        perror("open");
-        exit(1);
-    }
-
-    printf("%s\n",argv[1]);
-
-    long filesize=lseek(fd, 0, SEEK_END);
-
-    char buffer[filesize];
-                
-    lseek(fd, 0, SEEK_SET);
-    characters=read(fd, buffer, sizeof(buffer));
-
-    printf("%d characters were read from thread main\n", characters); 
 
     for (int i = 0; i < NTHREADS; ++i)
     {
                 
-        counter[i].buf=buffer;
+        counter[i].buf=argv[2];
         counter[i].counter_thread=i;
         pthread_create(&threads[i], NULL, &word_counter, (void *)&(counter[i]));
             
     }
-            
+    
     for (int i = 0; i < NTHREADS; ++i)
     {
         pthread_join(threads[i],NULL);
     }
-    printf ("The words of the %s is: %d\n",argv[1],sum);
 
+    //The words of the file is +24
+    int saveddata_size=(sizeof(getpid())+strlen(argv[1])+30+sizeof(sum));
+    char buffer_of_saveddata[saveddata_size];
+    
+    if ((fd=open("ole.txt",O_WRONLY | O_CREAT | O_APPEND,0644 ))==-1)
+    {
+        perror("");
+        exit(1);
+
+    }
+
+    sprintf(buffer_of_saveddata,"%d %s Words:%d\n",getpid(),argv[1],sum);
+
+    write(fd, buffer_of_saveddata, strlen(buffer_of_saveddata)); 
+    //printf ("The words of the %s is: %d\n",argv[1],sum);
+    printf("%s\n",buffer_of_saveddata);
     return 0;
 }       
+

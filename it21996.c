@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     pDir = opendir (argv[1]);
     if (pDir == NULL) 
     {
-        perror("opendir");
+        perror("");
 	    exit(1);
     }
 
@@ -53,13 +53,13 @@ int main(int argc, char *argv[])
 
         if( not_file != NULL)
         {
-            printf("The %s is not a file\n",de->d_name);
+            //printf("The %s is not a file\n",de->d_name);
             continue;
         }
 
         if ((fd=open(buffer_of_filename, O_RDONLY ))==-1)
         {
-            perror("open");
+            perror("");
             continue;
 
         }
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
                 
         if( filesize ==0 )
         {
-            printf("The file is empty.\n");
+            //printf("The file is empty.\n");
             continue;
         }
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         char buffer[filesize];
                 
         lseek(fd, 0, SEEK_SET);
-        characters=read(fd, buffer, sizeof(buffer));
+        characters=read(fd, buffer, filesize);
 
         //check if is in ASCII
         if(isnot_ascii(filesize,buffer))
@@ -87,21 +87,21 @@ int main(int argc, char *argv[])
             continue;
         }
         
-        char *argv[2];
+        
 
         pid = fork();
         
 		if (pid == -1)
 		{
-			perror("fork");
+			perror("");
 			exit(1);
 		}
-        char *args[]={"./wordcounter",buffer_of_filename,NULL}; 
+        char *args[]={"./wordcounter",buffer_of_filename,buffer,NULL}; 
 
         
         if (pid == 0)
 		{
-            printf("OLE\n");
+            
            execv(args[0],args);
         }else{
             wait(NULL);
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     }
 
    
-    close(fd);
+    
     closedir(pDir);  
     return 0;
 }
