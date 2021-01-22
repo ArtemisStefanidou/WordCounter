@@ -3,7 +3,6 @@
 
 #include <pthread.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -20,7 +19,6 @@ struct infoR
 {
     char *buf;//the text that this thread must read
     int counter_thread;//the number of the thread
-    char next_char;
 };
 
 //check if a character is a separator for words
