@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
         char *args[]={"./wordcounter",buffer_of_filename,buffer,NULL}; 
 
         //for the parent
-        if (pid == 0)
+        if (pid != 0)
 		{
             //Ignore SIGTERM and SIGINT signals
             signal(SIGINT, sig_Handler);
