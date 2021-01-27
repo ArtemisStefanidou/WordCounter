@@ -1,4 +1,6 @@
 #include "wordcounter.h"
+#include <pthread.h>
+
 
 //initialise the locks for threads
 pthread_mutex_t mymutex=PTHREAD_MUTEX_INITIALIZER;

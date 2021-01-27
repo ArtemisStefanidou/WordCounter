@@ -1,5 +1,9 @@
 #include "wordcounter.h"
 #include <signal.h> 
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 
 //Display a message to the user and will continue to run 
 void sig_Handler(int sig_num) 
@@ -33,9 +37,10 @@ int main(int argc, char *argv[])
     char* filename;
     size_t filename_l;
     pid_t pid;
+    int count_for_fork=0;
 
     //Check if user gives correct arguments from terminal
-    if(argc>=2)
+    if(argc>2)
     {
         printf("\tOptionally you have to give one directory.If not given will be listed in the current directory\n");
         exit(1);
@@ -129,6 +134,9 @@ int main(int argc, char *argv[])
             continue;
         }
         
+        
+
+        count_for_fork++;
         //create child process
         pid = fork();
         
@@ -146,7 +154,7 @@ int main(int argc, char *argv[])
         char *args[]={"./wordcounter",buffer_of_filename,buffer,NULL}; 
 
         //for the parent
-        if (pid != 0)
+        if (pid == 0)
 		{
             //Ignore SIGTERM and SIGINT signals
             signal(SIGINT, sig_Handler);
@@ -158,15 +166,25 @@ int main(int argc, char *argv[])
            
         }else{
             
+            //close the file
+            close(fd);
+
             //go to the program that is the first element of the array
             execv(args[0],args);
         }
     }
 
-    //print a message to user to understand where is the output tha written by the program
-    printf("\t.....Only files in Ascii is in the file out.txt.....\n");
+for (int i=0;i<count_for_fork;i++)
+{
+     //Wait for childern 
+            wait(NULL);
+}
     //close correctly the folder
     closedir(pDir);  
+
+    //print a message to user to understand where is the output tha written by the program
+    printf("\t.....Only files in Ascii is in the file out.txt.....\n");
+
     return 0;
 }
 
