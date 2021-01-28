@@ -1,3 +1,0 @@
-6934 ../Ubuntu/Desktop_No2/out.txt Words:10
-6942 ../Ubuntu/Desktop_No2/testarw.c Words:67
-6947 ../Ubuntu/Desktop_No2/artemis.txt Words:910
